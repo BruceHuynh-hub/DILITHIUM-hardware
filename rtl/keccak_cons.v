@@ -5,7 +5,7 @@ module keccak_cons(
     parameter [31:0]ur  = 1;
     input [4:0] addr;
     output [((ur * 64) - 1):0] rc;
-    localparam my_rom  = {16'b0000000000000001, 
+    localparam my_rom  = {16'h0000000000000001, 
                           16'b1000000010000010, 
                           1'b0, 
                           1'b0, 
