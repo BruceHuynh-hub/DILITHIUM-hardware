@@ -232,12 +232,7 @@ module keccak_datapath(
             sel_pad_location <= { 1'b0 };
         end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_datapath.vhd:134 
-            begin
                 sel_pad_location <= sel_pad_type_lookup;
-            end
-        end
     end
     assign sel_din_lookup = lookup_sel_lvl1_64bit_pad[CONV_INTEGER_3(c_wire[5:3])];
     always @ (  spos or  sel_din_lookup)
@@ -247,12 +242,7 @@ module keccak_datapath(
             sel_din <= { 1'b1 };
         end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_datapath.vhd:137 
-            begin
                 sel_din <= sel_din_lookup;
-            end
-        end
     end
     assign sel_dout = lookup_sel_lvl1_64bit_out_zeropad[CONV_INTEGER_3(output_size[5:3])];
     keccak_bytepad #(
@@ -290,16 +280,9 @@ module keccak_datapath(
         else
         begin 
             if ( mode_ctrl == 2'b10 ) 
-            begin
                 from_concat <= { from_sipo, { 1'b0 } };
-            end
             else
-            begin 
-                if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sipo.vhd:166 
-                begin
                     from_concat <= { from_sipo[1087:0], { 1'b0 } };
-                end
-            end
         end
     end
     always @ (  sel_xor or  from_round)
@@ -309,12 +292,7 @@ module keccak_datapath(
             to_xor <= { 1'b0 };
         end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sipo.vhd:171 
-            begin
                 to_xor <= from_round;
-            end
-        end
     end
     assign from_xor = ( from_concat ^ to_xor );
     always @ (  sel_final or  from_xor or  from_round)
@@ -324,12 +302,7 @@ module keccak_datapath(
             to_register <= from_xor;
         end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sipo.vhd:173 
-            begin
                 to_register <= from_round;
-            end
-        end
     end
     regn #(
             .n(1600),
