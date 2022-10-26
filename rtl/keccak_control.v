@@ -52,11 +52,11 @@ module keccak_control(
     input final_segment;
     output sel_out;
     output wr_piso;
-    input [31:0]c;
-    input [31:0]d;
-    input [1:0]mode;
-    output [1:0]mode_ctrl;
-    inout [10:0]output_size;
+    input [31:0] c;
+    input [31:0] d;
+    input [1:0] mode;
+    output [1:0] mode_ctrl;
+    inout [10:0] output_size;
     output last_out_word;
     wire block_ready_set;
     wire msg_end_set;
@@ -150,28 +150,28 @@ module keccak_control(
             .clk(clk),
             .rst(rst),
             .clr(block_ready_clr),
-            .output(block_ready),
+            .data_out(block_ready),
             .set(block_ready_set)
         );
     sr_reg sr_msg_end (
             .clk(clk),
             .rst(rst),
             .clr(msg_end_clr),
-            .output(msg_end),
+            .data_out(msg_end),
             .set(msg_end_set)
         );
     sr_reg sr_output_write (
             .clk(clk),
             .rst(rst),
             .clr(output_write_clr),
-            .output(output_write),
+            .data_out(output_write),
             .set(output_write_set)
         );
     sr_reg sr_output_busy (
             .clk(clk),
             .rst(rst),
             .clr(output_busy_clr),
-            .output(output_busy),
+            .data_out(output_busy),
             .set(output_busy_set)
         );
     assign ein = ein_wire;
@@ -179,9 +179,9 @@ module keccak_control(
     assign en_output_len = en_output_len_wire;
     assign en_ctr = en_ctr_wire;
     assign src_read = src_read_wire;
-    always @ (  posedge clk)
+    always @ (posedge clk)
     begin : reg_out
-        if ( clk == 1'b1 ) 
+        if (clk == 1'b1) 
         begin
             wr_state <= wr_state_wire;
             sel_xor <= sel_xor_wire;
@@ -191,7 +191,7 @@ module keccak_control(
             sel_out_wire2 <= sel_out_wire;
         end
     end
-    assign wr_piso_wire = ( eo_wire | sel_out_wire2 );
+    assign wr_piso_wire = (eo_wire | sel_out_wire2);
     assign dst_write = dst_write_wire;
     assign sel_out = sel_out_wire2;
     assign wr_piso = wr_piso_wire;
