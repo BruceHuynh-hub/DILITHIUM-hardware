@@ -37,20 +37,11 @@ module keccak_cons(
                           16'b0000000000000000, 
                           16'b0000000000000000, 
                           16'b0000000000000000 };
-    function  CONV_INTEGER_5;
-        input [4:0] arg;
-    begin
-    end
-    endfunction 
-    function  CONV_INTEGER_6;
-        input [5:0] arg;
-    begin
-    end
-    endfunction 
+
     generate
         if (ur == 1) 
         begin : l1_con
-            assign rc = my_rom[CONV_INTEGER_5(unsigned'(addr))];
+            assign rc = my_rom[addr];
         end
     endgenerate
     generate
@@ -60,7 +51,7 @@ module keccak_cons(
             generate
                 for (i = 0 ; (i <= (ur - 1)); i = (i + 1))
                 begin : l2_gen
-                    assign rc[((64 * (i + 1)) - 1):(64 * i)] = my_rom[CONV_INTEGER_6(unsigned'((addr + i)))];
+                    assign rc[((64 * (i + 1)) - 1):(64 * i)] = my_rom[addr + i];
                 end
             endgenerate
         end
