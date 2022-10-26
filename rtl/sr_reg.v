@@ -3,12 +3,12 @@ module sr_reg(
         clk,
         set,
         clr,
-        output
+        data_out
     );
     parameter init  = 1'b1;
     input rst;
     input clk;
     input set;
     input clr;
-    output output;
+    output data_out;
 endmodule 
