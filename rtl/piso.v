@@ -2,16 +2,16 @@ module piso(
         clk,
         en,
         sel,
-        input,
-        output
+        data_in,
+        data_out
     );
     parameter [31:0]n  = 1344;
     parameter [31:0]m  = 64;
     input clk;
     input en;
     input sel;
-    input [( n - 1 ):0] input;
-    output [( m - 1 ):0] output;
+        input [( n - 1 ):0] data_in;
+        output [( m - 1 ):0] data_out;
     localparam regamount  = ( n / m );
     genvar i;
     reg [0:( ( n / m ) - 1 )]mux;
