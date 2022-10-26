@@ -2,6 +2,7 @@ module keccak_cons(
         addr,
         rc
     );
+    
     parameter [31:0]ur  = 1;
     input [4:0] addr;
     output [((ur * 64) - 1):0] rc;
@@ -37,23 +38,23 @@ module keccak_cons(
                           16'b0000000000000000, 
                           16'b0000000000000000, 
                           16'b0000000000000000 };
-
+                          
     generate
         if (ur == 1) 
         begin : l1_con
             assign rc = my_rom[addr];
         end
     endgenerate
+    
     generate
-        if ( ur > 1 ) 
-        begin : l2_con
-        genvar i;
-            generate
-                for (i = 0 ; (i <= (ur - 1)); i = (i + 1))
-                begin : l2_gen
-                    assign rc[((64 * (i + 1)) - 1):(64 * i)] = my_rom[addr + i];
-                end
-            endgenerate
-        end
+        if (ur > 1)
+        begin : l2_con          
+           genvar i; 
+            for (i = 0 ; (i <= (ur - 1)); i = (i + 1))
+            begin : l2_gen
+                assign rc[((64 * (i + 1)) - 1):(64 * i)] = my_rom[addr + i];
+            end 
+        end 
     endgenerate
-endmodule 
+              
+endmodule
