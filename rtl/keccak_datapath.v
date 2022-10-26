@@ -300,10 +300,10 @@ module keccak_datapath(
         ) state (
             .clk(clk),
             .en(wr_state),
-            .input(to_register),
+            .data_in(to_register),
             .rst(rst),
-            .output(to_round)
-        );
+            .data_out(to_round));
+            
     keccak_cons rd_cons (
             .addr(rd_ctr),
             .rc(rc)
@@ -342,4 +342,4 @@ module keccak_datapath(
             .sel(sel_piso),
             .data_out(dout_wire)
         );
-endmodule 
+endmodule
