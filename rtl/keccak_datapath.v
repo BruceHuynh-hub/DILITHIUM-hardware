@@ -1,4 +1,4 @@
-module keccak_datapath(
+module keccak_datapath(        
         clk,
         rst,
         din,
@@ -63,10 +63,10 @@ module keccak_datapath(
     wire [4:0] rd_ctr;
     wire [63:0] rc;
     wire [63:0] swap_din;
-    localparam zeros_128  = { ( ( ( ( 256 - 0 ) < 0 ) ) ? ( (  -( 1) * ( 256 - 0 ) ) ) : ( ( 256 - 0 ) ) ) { 1'b0 } } ;
-    localparam zeros_256  = { ( ( ( ( 512 - 0 ) < 0 ) ) ? ( (  -( 1) * ( 512 - 0 ) ) ) : ( ( 512 - 0 ) ) ) { 1'b0 } } ;
-    localparam zeros_512  = { ( ( ( ( 1024 - 0 ) < 0 ) ) ? ( (  -( 1) * ( 1024 - 0 ) ) ) : ( ( 1024 - 0 ) ) ) { 1'b0 } } ;
-    localparam state_zero  = { ( ( ( ( 1599 - 0 ) < 0 ) ) ? ( (  -( 1) * ( 1599 - 0 ) ) ) : ( ( 1599 - 0 ) ) ) { 1'b0 } } ;
+    localparam zeros_128 = {((((256 - 0) < 0)) ? ((-(1) * (256 - 0))) : ((256 - 0))) {1'b0}} ;
+    localparam zeros_256 = {((((512 - 0) < 0)) ? ((-(1) * (512 - 0 ))) : ((512 - 0))) {1'b0}} ;
+    localparam zeros_512 = {((((1024 - 0) < 0)) ? ((-(1) * (1024 - 0))) : ((1024 - 0))) {1'b0}} ;
+    localparam state_zero = {((((1599 - 0) < 0)) ? ((-( 1) * (1599 - 0))) : ((1599 - 0))) {1'b0}} ;
     wire [0:1343] se_result;
     wire [63:0] din_padded;
     wire [7:0] sel_pad_type_lookup;
@@ -78,12 +78,7 @@ module keccak_datapath(
     reg [1:0]shake_mode_wire;
     reg [31:0]block_size;
     reg [31:0]c_wire_in;
-    localparam lookup_sel_lvl2_64bit_pad  = { 8'b10000000, 8'b01000000, 8'b00100000, 8'b00010000, 8'b00001000, 8'b00000100, 8'b00000010, 8'b00000001 };
-    function  CONV_INTEGER_3;
-        input [2:0] arg;
-    begin
-    end
-    endfunction 
+    localparam lookup_sel_lvl2_64bit_pad  = { 8'b10000000, 8'b01000000, 8'b00100000, 8'b00010000, 8'b00001000, 8'b00000100, 8'b00000010, 8'b00000001 }; 
     reg [7:0]sel_pad_location;
     localparam lookup_sel_lvl1_64bit_pad  = { 8'b00000000, 8'b10000000, 8'b11000000, 8'b11100000, 8'b11110000, 8'b11111000, 8'b11111100, 8'b11111110 };
     reg [7:0]sel_din;
@@ -207,44 +202,39 @@ module keccak_datapath(
             end
         end
     end
-    always @ (  sel_dec_size or  c_wire or  block_size)
+    always @ (sel_dec_size or  c_wire or  block_size)
     begin
         if ( sel_dec_size == 1'b1 ) 
         begin
-            c_wire_in <= ( c_wire - block_size );
+            c_wire_in <= (c_wire - block_size);
         end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_datapath.vhd:128 
-            begin
-                c_wire_in <= ( c_wire - 64 );
-            end
-        end
+                c_wire_in <= (c_wire - 64);
     end
     assign c = c_wire;
     assign d = d_len_wire;
     assign mode = shake_mode_wire;
-    assign sel_pad_type_lookup = lookup_sel_lvl2_64bit_pad[CONV_INTEGER_3(c_wire[5:3])];
-    always @ (  spos or  sel_pad_type_lookup)
+    assign sel_pad_type_lookup = lookup_sel_lvl2_64bit_pad[c_wire[5:3]];
+    always @ (spos or sel_pad_type_lookup)
     begin
-        if ( spos[0] == 1'b0 ) 
+        if (spos[0] == 1'b0) 
         begin
-            sel_pad_location <= { 1'b0 };
+            sel_pad_location <= {1'b0};
         end
         else
                 sel_pad_location <= sel_pad_type_lookup;
     end
-    assign sel_din_lookup = lookup_sel_lvl1_64bit_pad[CONV_INTEGER_3(c_wire[5:3])];
+    assign sel_din_lookup = lookup_sel_lvl1_64bit_pad[c_wire[5:3]];
     always @ (  spos or  sel_din_lookup)
     begin
-        if ( spos[1] == 1'b1 ) 
+        if (spos[1] == 1'b1) 
         begin
             sel_din <= { 1'b1 };
         end
         else
-                sel_din <= sel_din_lookup;
+            sel_din <= sel_din_lookup;
     end
-    assign sel_dout = lookup_sel_lvl1_64bit_out_zeropad[CONV_INTEGER_3(output_size[5:3])];
+    assign sel_dout = lookup_sel_lvl1_64bit_out_zeropad[output_size[5:3]];
     keccak_bytepad #(
             .w(64)
         ) pad_unit (
@@ -268,14 +258,14 @@ module keccak_datapath(
         ) in_buf (
             .clk(clk),
             .en(ein),
-            .input(swap_din),
-            .output(from_sipo)
+            .data_in(swap_din),
+            .data_out(from_sipo)
         );
     always @ (  mode_ctrl)
     begin
-        if ( mode_ctrl == 2'b01 ) 
+        if (mode_ctrl == 2'b01) 
         begin
-            from_concat <= { from_sipo[575:0], { 1'b0 } };
+            from_concat <= {from_sipo[575:0], {1'b0}};
         end
         else
         begin 
@@ -285,19 +275,19 @@ module keccak_datapath(
                     from_concat <= { from_sipo[1087:0], { 1'b0 } };
         end
     end
-    always @ (  sel_xor or  from_round)
+    always @ (sel_xor or  from_round)
     begin
         if ( sel_xor == 1'b1 ) 
         begin
             to_xor <= { 1'b0 };
         end
         else
-                to_xor <= from_round;
+            to_xor <= from_round;
     end
-    assign from_xor = ( from_concat ^ to_xor );
-    always @ (  sel_final or  from_xor or  from_round)
+    assign from_xor = (from_concat ^ to_xor);
+    always @ (sel_final or from_xor or from_round)
     begin
-        if ( sel_final == 1'b1 ) 
+        if (sel_final == 1'b1) 
         begin
             to_register <= from_xor;
         end
@@ -330,16 +320,16 @@ module keccak_datapath(
         ) ctr (
             .clk(clk),
             .en(en_rdctr),
-            .input(zeros_128),
+            .data_in(zeros_128),
             .load(ld_rdctr),
             .rst(rst),
-            .output(rd_ctr)
+            .data_out(rd_ctr)
         );
     generate
-        for ( i = 0 ; ( i <= ( ( 1344 / 64 ) - 1 ) ) ; i = ( i + 1 ) )
+      for (i = 0 ; (i <= ((1344/64) - 1)); i = (i + 1))
         begin : out_gen
-            assign se_result[i] = to_round[1599:( 1600 - ( ( i + 1 ) * 64 ) )];
-            assign to_piso[1343:( 1344 - ( ( i + 1 ) * 64 ) )] = switch_endian_word_1_32_32();
+            assign se_result[i] = to_round[1599:(1600 - ((i + 1) * 64))];
+            assign to_piso[1343:(1344 - ((i + 1) * 64))] = switch_endian_word_1_32_32();
         end
     endgenerate
     piso #(
@@ -348,8 +338,8 @@ module keccak_datapath(
         ) out_buf (
             .clk(clk),
             .en(wr_piso),
-            .input(to_piso),
+            .data_in(to_piso),
             .sel(sel_piso),
-            .output(dout_wire)
+            .data_out(dout_wire)
         );
 endmodule 
