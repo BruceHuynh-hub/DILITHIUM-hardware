@@ -16,7 +16,7 @@ module piso(
     localparam regamount  = ( n / m );
     genvar i;
     reg [0:( ( n / m ) - 1 )]mux;
-    reg [0:( ( n / m ) - 1 )]mux2;
+        reg [0:( ( n / m ) - 1 )]mux2; // reg reg was renamed to reg mux2
    assign mux[( ( n / m ) - 1 )] = data_in;
     generate
         for ( i = 0 ; ( i <= ( ( n / m ) - 2 ) ) ; i = ( i + 1 ) )
