@@ -1,3 +1,4 @@
+// Code your design here
 module piso(
         clk,
         en,
@@ -15,23 +16,23 @@ module piso(
     localparam regamount  = ( n / m );
     genvar i;
     reg [0:( ( n / m ) - 1 )]mux;
-    reg [0:( ( n / m ) - 1 )]reg;
-    assign mux[( ( n / m ) - 1 )] = input;
+    reg [0:( ( n / m ) - 1 )]mux2;
+   assign mux[( ( n / m ) - 1 )] = data_in;
     generate
         for ( i = 0 ; ( i <= ( ( n / m ) - 2 ) ) ; i = ( i + 1 ) )
         begin : mux_gen
-            always @ (  sel or  input or  reg)
+            always @ (  sel or  data_in or  mux2)
             begin
                 if ( sel == 1'b1 ) 
                 begin
-                    mux[i] <= input[( n - 1 ):( n - m )];
+                    mux[i] <= data_in[( n - 1 ):( n - m )];
                 end
                 else
                 begin 
                     if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/piso.vhd:36 
-                    begin
-                        mux[i] <= reg[( i + 1 )];
-                    end
+                    
+                        mux[i] <= mux2[( i + 1 )];
+                    
                 end
             end
         end
@@ -45,11 +46,10 @@ module piso(
                 begin
                     if ( en == 1'b1 ) 
                     begin
-                        reg[i] <= mux[i];
+                        mux2[i] <= mux[i];
                     end
                 end
             end
         end
     endgenerate
-    assign output = reg[0];
-endmodule 
+    assign data_out = mux2[0];
