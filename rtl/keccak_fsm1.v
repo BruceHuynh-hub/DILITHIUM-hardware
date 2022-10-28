@@ -279,17 +279,17 @@ module keccak_fsm1(
             .clr(lf),
             .rst(rst),
             .set(ef),
-            .output(f)
+            .data_out(f)
         );
     countern #(
             .n(log2_32(( 1344 / 64 )))
         ) word_counter_gen (
             .clk(clk),
             .en(ej),
-            .input({ 1'b0 }),
+      .data_in({ 1'b0 }), //renamed from input
             .load(lj),
             .rst(1'b0),
-            .output(wc)
+      .data_out(wc) // renamed from output
         );
     always @ (  wc)
     begin
@@ -345,20 +345,20 @@ module keccak_fsm1(
             end
             else
             begin 
-                nstate <= 1'b10;
+                nstate <= 2'b10;
             end
         end
-        1'b10:
+        2'b10:
         begin
             if ( ( ( src_ready == 1'b1 ) & ( ( ( f == 1'b0 ) | ( zc0 == 1'b0 ) ) | ( full_block == 1'b1 ) ) ) | ( zjfin == 1'b0 ) ) 
             begin
-                nstate <= 1'b10;
+                nstate <= 2'b10;
             end
             else
             begin 
                 if ( ( ( zjfin == 1'b1 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) 
                 begin
-                    nstate <= 1'b100;
+                    nstate <= 3'b100;
                 end
                 else
                 begin 
@@ -373,11 +373,11 @@ module keccak_fsm1(
                 end
             end
         end
-        1'b100:
+        3'b100:
         begin
             if ( load_next_block == 1'b0 ) 
             begin
-                nstate <= 1'b100;
+                nstate <= 3'b100;
             end
             else
             begin 
@@ -388,7 +388,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  src_ready or  zc0 or  full_block)
     begin
-        if ( ( ( cstate_fsm1 == 1'b1 ) & ( src_ready == 1'b0 ) ) | ( ( ( cstate_fsm1 == 1'b10 ) & ( src_ready == 1'b0 ) ) & ( ( zc0 == 1'b0 ) | ( full_block == 1'b1 ) ) ) ) 
+      if ( ( ( cstate_fsm1 == 1'b1 ) & ( src_ready == 1'b0 ) ) | ( ( ( cstate_fsm1 == 2'b10 ) & ( src_ready == 1'b0 ) ) & ( ( zc0 == 1'b0 ) | ( full_block == 1'b1 ) ) ) ) 
         begin
             src_read <= 1'b1;
         end
@@ -403,7 +403,7 @@ module keccak_fsm1(
     assign ein = ej;
     always @ (  cstate_fsm1 or  src_ready or  zc0 or  f or  full_block)
     begin
-        if ( ( cstate_fsm1 == 1'b10 ) & ( ( ( src_ready == 1'b0 ) & ( ( ( zc0 == 1'b0 ) | ( f == 1'b0 ) ) | ( full_block == 1'b1 ) ) ) | ( ( ( zc0 == 1'b1 ) & ( f == 1'b1 ) ) & ( full_block == 1'b0 ) ) ) ) 
+      if ( ( cstate_fsm1 == 2'b10 ) & ( ( ( src_ready == 1'b0 ) & ( ( ( zc0 == 1'b0 ) | ( f == 1'b0 ) ) | ( full_block == 1'b1 ) ) ) | ( ( ( zc0 == 1'b1 ) & ( f == 1'b1 ) ) & ( full_block == 1'b0 ) ) ) ) 
         begin
             ej <= 1'b1;
         end
@@ -417,7 +417,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  zjfin or  src_ready or  zc0 or  f or  full_block)
     begin
-        if ( ( ( cstate_fsm1 == 1'b10 ) & ( zjfin == 1'b1 ) ) & ( ( ( src_ready == 1'b0 ) & ( ( ( zc0 == 1'b0 ) | ( f == 1'b0 ) ) | ( full_block == 1'b1 ) ) ) | ( ( ( zc0 == 1'b1 ) & ( f == 1'b1 ) ) & ( full_block == 1'b0 ) ) ) ) 
+      if ( ( ( cstate_fsm1 == 2'b10 ) & ( zjfin == 1'b1 ) ) & ( ( ( src_ready == 1'b0 ) & ( ( ( zc0 == 1'b0 ) | ( f == 1'b0 ) ) | ( full_block == 1'b1 ) ) ) | ( ( ( zc0 == 1'b1 ) & ( f == 1'b1 ) ) & ( full_block == 1'b0 ) ) ) ) 
         begin
             block_ready_set <= 1'b1;
         end
@@ -431,7 +431,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  zjfin or  full_block or  f)
     begin
-        if ( ( ( ( cstate_fsm1 == 1'b10 ) & ( zjfin == 1'b1 ) ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) 
+      if ( ( ( ( cstate_fsm1 == 2'b10 ) & ( zjfin == 1'b1 ) ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) 
         begin
             msg_end_set <= 1'b1;
         end
@@ -445,7 +445,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  load_next_block)
     begin
-        if ( ( cstate_fsm1 == 0'b0 ) | ( ( cstate_fsm1 == 1'b100 ) & ( load_next_block == 1'b1 ) ) ) 
+      if ( ( cstate_fsm1 == 0'b0 ) | ( ( cstate_fsm1 == 3'b100 ) & ( load_next_block == 1'b1 ) ) ) 
         begin
             lf <= 1'b1;
         end
@@ -501,7 +501,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  load_next_block or  zc_more_than_block or  full_block or  src_ready or  zc0)
     begin
-        if ( ( ( ( cstate_fsm1 == 2'b11 ) & ( load_next_block == 1'b1 ) ) & ( zc_more_than_block == 1'b1 ) ) | ( ( ( ( cstate_fsm1 == 1'b10 ) & ( full_block == 1'b0 ) ) & ( src_ready == 1'b0 ) ) & ( zc0 == 1'b0 ) ) ) 
+        if ( ( ( ( cstate_fsm1 == 2'b11 ) & ( load_next_block == 1'b1 ) ) & ( zc_more_than_block == 1'b1 ) ) | ( ( ( ( cstate_fsm1 == 2'b10 ) & ( full_block == 1'b0 ) ) & ( src_ready == 1'b0 ) ) & ( zc0 == 1'b0 ) ) ) 
         begin
             en_ctr <= 1'b1;
         end
@@ -515,7 +515,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1)
     begin
-        if ( ( ( cstate_fsm1 == 0'b0 ) | ( cstate_fsm1 == 2'b11 ) ) | ( cstate_fsm1 == 1'b100 ) ) 
+      if ( ( ( cstate_fsm1 == 0'b0 ) | ( cstate_fsm1 == 2'b11 ) ) | ( cstate_fsm1 == 3'b100 ) ) 
         begin
             lj <= 1'b1;
         end
@@ -532,7 +532,7 @@ module keccak_fsm1(
             .clr(clr_full_block),
             .rst(rst),
             .set(set_full_block),
-            .output(full_block)
+      .data_out(full_block) //changed output to data_out
         );
     always @ (  cstate_fsm1 or  zc_more_than_block)
     begin
@@ -550,7 +550,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  zjfin or  ej)
     begin
-        if ( ( ( cstate_fsm1 == 1'b10 ) & ( zjfin == 1'b1 ) ) & ( ej == 1'b1 ) ) 
+      if ( ( ( cstate_fsm1 == 2'b10 ) & ( zjfin == 1'b1 ) ) & ( ej == 1'b1 ) ) 
         begin
             clr_full_block <= 1'b1;
         end
@@ -567,17 +567,17 @@ module keccak_fsm1(
             .clr(clr_start_pad),
             .rst(rst),
             .set(set_start_pad),
-            .output(start_pad)
+      .data_out(start_pad) //changed from output
         );
     always @ (  cstate_fsm1 or  full_block or  f or  comp_lb_e0 or  start_pad)
     begin
-        if ( ( ( ( ( cstate_fsm1 == 1'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b0 ) ) 
+      if ( ( ( ( ( cstate_fsm1 == 2'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b0 ) ) 
         begin
             spos_sig <= 2'b00;
         end
         else
         begin 
-            if ( ( ( ( ( cstate_fsm1 == 1'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b1 ) ) 
+          if ( ( ( ( ( cstate_fsm1 == 2'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b1 ) ) 
             begin
                 spos_sig <= 2'b01;
             end
@@ -607,7 +607,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  full_block or  f or  comp_lb_e0 or  start_pad or  ej)
     begin
-        if ( ( ( ( ( ( cstate_fsm1 == 1'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b1 ) ) & ( ej == 1'b1 ) ) 
+      if ( ( ( ( ( ( cstate_fsm1 == 2'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( start_pad == 1'b1 ) ) & ( ej == 1'b1 ) ) 
         begin
             clr_start_pad <= 1'b1;
         end
@@ -621,7 +621,7 @@ module keccak_fsm1(
     end
     always @ (  cstate_fsm1 or  zjfin or  full_block or  f)
     begin
-        if ( ( ( ( cstate_fsm1 == 1'b10 ) & ( zjfin == 1'b1 ) ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) 
+      if ( ( ( ( cstate_fsm1 == 2'b10 ) & ( zjfin == 1'b1 ) ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) 
         begin
             last_word <= 1'b1;
         end
@@ -636,7 +636,7 @@ module keccak_fsm1(
     assign sel_dec_size = set_full_block;
     always @ (  cstate_fsm1 or  full_block or  f or  comp_lb_e0 or  src_ready or  ej)
     begin
-        if ( ( ( ( ( ( cstate_fsm1 == 1'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( src_ready == 1'b0 ) ) & ( ej == 1'b1 ) ) 
+      if ( ( ( ( ( ( cstate_fsm1 == 2'b10 ) & ( full_block == 1'b0 ) ) & ( f == 1'b1 ) ) & ( comp_lb_e0 == 1'b1 ) ) & ( src_ready == 1'b0 ) ) & ( ej == 1'b1 ) ) 
         begin
             clr_len <= 1'b1;
         end
