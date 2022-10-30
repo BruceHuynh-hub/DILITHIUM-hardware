@@ -45,7 +45,7 @@ module keccak_fsm2(
     end
     endfunction 
     localparam log2roundnr  = log2_32(24);
-    localparam log2roundnrzeros  = { ( ( ( ( ( log2_32(24) - 1 ) - 0 ) < 0 ) ) ? ( (  -( 1) * ( ( log2_32(24) - 1 ) - 0 ) ) ) : ( ( ( log2_32(24) - 1 ) - 0 ) ) ) { 1'b0 } } ;
+    localparam log2roundnrzeros  = { (((((log2_32(24)-1)-0) <0)) ? ((-( 1)*((log2_32(24)-1)-0))) : (((log2_32(24)-1)-0))) { 1'b0 } };
     wire [( log2_32(24) - 1 ):0] pc;
     wire sel_xor_wire;
     reg [31:0]b;
@@ -77,19 +77,12 @@ module keccak_fsm2(
     reg en_rdctr;
     reg wr_state;
     reg msg_end_clr;
-    always @ (  mode_r)
+    always @ ( mode_r)
     begin
         if ( mode_r == 2'b11 ) 
-        begin
             b <= 1088;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_fsm2.vhd:67 
-            begin
-                b <= 1344;
-            end
-        end
+            b <= 1344;
     end
     countern #(
             .n(log2_32(24))
@@ -104,16 +97,9 @@ module keccak_fsm2(
     always @ (  pc)
     begin
         if ( pc == CONV_STD_LOGIC_VECTOR_32_32(( 24 - 1 ),log2_32(24)) ) 
-        begin
             ziroundnr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:78 
-            begin
-                ziroundnr <= 1'b0;
-            end
-        end
+            ziroundnr <= 1'b0;
     end
     always @ (  posedge clk)
     begin : cstate_proc
@@ -137,7 +123,7 @@ module keccak_fsm2(
             end
         end
     end
-    always @ (  cstate or  msg_end or  output_busy or  block_ready or  ziroundnr or  d or  cnt_output_size_r or  b or  mode or  hashing_started_r or  output_size_r or  mode_r)
+    always @ ( cstate or msg_end or output_busy or block_ready or ziroundnr or d or cnt_output_size_r or b or mode or hashing_started_r or output_size_r or mode_r)
     begin : nstate_proc
         cnt_output_size_next <= cnt_output_size_r;
         output_size_next <= output_size_r;
@@ -174,72 +160,52 @@ module keccak_fsm2(
                     end
                 end
                 else
-                begin 
                     nstate <= 1'b1;
-                end
             end
         end
         1'b10:
         begin
             if ( ( ziroundnr == 1'b0 ) | ( ( ( ziroundnr == 1'b1 ) & ( msg_end == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) 
-            begin
                 nstate <= 1'b10;
-            end
             else
             begin 
                 if ( ( ziroundnr == 1'b1 ) & ( msg_end == 1'b1 ) ) 
-                begin
                     nstate <= 2'b11;
-                end
                 else
-                begin 
                     nstate <= 1'b1;
-                end
             end
         end
         2'b11:
         begin
             if ( ziroundnr == 1'b0 ) 
-            begin
                 nstate <= 2'b11;
-            end
             else
             begin 
                 if ( ziroundnr == 1'b1 ) 
                 begin
                     if ( ( mode_r == 2'b00 ) | ( mode_r == 2'b01 ) ) 
-                    begin
                         nstate <= 2'b101;
-                    end
                     else
-                    begin 
                         nstate <= 1'b100;
-                    end
                 end
                 else
-                begin 
                     nstate <= 1'b1;
-                end
             end
         end
         2'b101:
         begin
             if ( mode_r == 2'b00 ) 
-            begin
                 output_size_next <= CONV_STD_LOGIC_VECTOR_32_32(256,11);
-            end
             else
-            begin 
-                if ( mode_r == 2'b01 ) 
-                begin
-                    output_size_next <= CONV_STD_LOGIC_VECTOR_32_32(512,11);
+                begin 
+                    if ( mode_r == 2'b01 ) 
+                        output_size_next <= CONV_STD_LOGIC_VECTOR_32_32(512,11);
                 end
-            end
             if ( output_busy == 1'b1 ) 
-            begin
-                hashing_started_next <= 1'b0;
-                nstate <= 3'b111;
-            end
+                begin
+                    hashing_started_next <= 1'b0;
+                    nstate <= 3'b111;
+                end
             else
             begin 
                 if ( ( block_ready == 1'b1 ) & ( msg_end == 1'b1 ) ) 
@@ -267,9 +233,7 @@ module keccak_fsm2(
         3'b111:
         begin
             if ( output_busy == 1'b1 ) 
-            begin
                 nstate <= 3'b111;
-            end
             else
             begin 
                 if ( ( block_ready == 1'b1 ) & ( msg_end == 1'b1 ) ) 
@@ -289,9 +253,7 @@ module keccak_fsm2(
                         nstate <= 1'b10;
                     end
                     else
-                    begin 
                         nstate <= 1'b1;
-                    end
                 end
             end
         end
@@ -312,7 +274,7 @@ module keccak_fsm2(
                 end
                 else
                 begin 
-                    if ( ( block_ready == 1'b1 ) & ( msg_end == 1'b1 ) ) 
+                    if (( block_ready == 1'b1 ) & (msg_end == 1'b1 )) 
                     begin
                         cnt_output_size_next <= d;
                         mode_next <= mode;
@@ -338,12 +300,10 @@ module keccak_fsm2(
         2'b110:
         begin
             if ( output_busy == 1'b1 ) 
-            begin
                 nstate <= 2'b110;
-            end
             else
             begin 
-                if ( ( block_ready == 1'b1 ) & ( msg_end == 1'b1 ) ) 
+                if (( block_ready == 1'b1 ) & ( msg_end == 1'b1 )) 
                 begin
                     nstate <= 2'b11;
                     cnt_output_size_next <= d;
@@ -360,26 +320,20 @@ module keccak_fsm2(
                         hashing_started_next <= 1'b1;
                     end
                     else
-                    begin 
                         nstate <= 1'b1;
-                    end
                 end
             end
         end
         1'b1000:
         begin
             if ( ziroundnr == 1'b0 ) 
-            begin
                 nstate <= 1'b1000;
-            end
             else
             begin 
                 if ( ziroundnr == 1'b1 ) 
                 begin
                     if ( output_busy == 1'b1 ) 
-                    begin
                         nstate <= 2'b1001;
-                    end
                     else
                     begin 
                         cnt_output_size_next <= ( cnt_output_size_r - b );
@@ -387,9 +341,7 @@ module keccak_fsm2(
                     end
                 end
                 else
-                begin 
                     nstate <= 1'b1;
-                end
             end
         end
         2'b1001:
@@ -404,64 +356,37 @@ module keccak_fsm2(
     end
     assign output_size = output_size_r;
     assign mode_ctrl = mode_r;
-    always @ (  cstate or  output_busy)
+    always @ (cstate or output_busy)
     begin
-        if ( ( ( ( cstate == 2'b101 ) | ( cstate == 1'b100 ) ) & ( output_busy == 1'b0 ) ) | ( ( ( cstate == 3'b111 ) | ( cstate == 2'b110 ) ) & ( output_busy == 1'b0 ) ) ) 
-        begin
+        if ((((cstate == 2'b101) | (cstate == 1'b100)) & (output_busy == 1'b0)) | (((cstate == 3'b111) | (cstate == 2'b110)) & (output_busy == 1'b0))) 
             output_data_s <= 1'b1;
-        end
         else
         begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_fsm2.vhd:264 
-            begin
                 output_data_s <= 1'b0;
-            end
-        end
     end
     assign output_write_set = output_data_s;
     assign output_busy_set = output_data_s;
     assign lo = output_data_s;
-    always @ (  cstate or  pc)
+    always @ ( cstate or pc)
     begin
-        if ( ( ( cstate == 1'b10 ) | ( cstate == 2'b11 ) ) & ( pc == 4 ) ) 
-        begin
+        if (((cstate == 1'b10) | (cstate == 2'b11)) & (pc == 4)) 
             block_ready_clr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_fsm2.vhd:273 
-            begin
-                block_ready_clr <= 1'b0;
-            end
-        end
+            block_ready_clr <= 1'b0;
     end
-    always @ (  cstate)
+    always @ ( cstate)
     begin
-        if ( ( ( cstate == 1'b10 ) | ( cstate == 2'b11 ) ) | ( cstate == 1'b1000 ) ) 
-        begin
+        if (((cstate == 1'b10) | (cstate == 2'b11)) | (cstate == 1'b1000)) 
             ei <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_fsm2.vhd:276 
-            begin
-                ei <= 1'b0;
-            end
-        end
+            ei <= 1'b0;
     end
     always @ (  cstate or  ziroundnr)
     begin
-        if ( ( ( cstate == 0'b0 ) | ( cstate == 1'b1 ) ) | ( ziroundnr == 1'b1 ) ) 
-        begin
+        if (((cstate == 0'b0) | (cstate == 1'b1)) | (ziroundnr == 1'b1)) 
             li <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/keccak_fsm2.vhd:279 
-            begin
-                li <= 1'b0;
-            end
-        end
+            li <= 1'b0;
     end
     sr_reg #(
             .init(1'b1)
@@ -472,103 +397,54 @@ module keccak_fsm2(
             .set(sel_xor_set),
             .output(sel_xor_wire)
         );
-    always @ (  cstate or  ziroundnr)
+    always @ (cstate or ziroundnr)
     begin
-        if ( ( ( cstate == 0'b0 ) | ( ( cstate == 2'b11 ) & ( ziroundnr == 1'b1 ) ) ) | ( ( cstate == 1'b1000 ) & ( ziroundnr == 1'b1 ) ) ) 
-        begin
+        if ((( cstate == 0'b0) | ((cstate == 2'b11) & (ziroundnr == 1'b1))) | ((cstate == 1'b1000) & (ziroundnr == 1'b1))) 
             sel_xor_set <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:292 
-            begin
-                sel_xor_set <= 1'b0;
-            end
-        end
+            sel_xor_set <= 1'b0;
     end
-    always @ (  sel_xor_wire or  cstate or  block_ready or  output_busy)
+    always @ ( sel_xor_wire or cstate or block_ready or output_busy)
     begin
-        if ( ( sel_xor_wire == 1'b1 ) & ( ( ( ( cstate == 1'b1 ) & ( block_ready == 1'b1 ) ) | ( ( ( ( cstate == 2'b101 ) | ( cstate == 1'b100 ) ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) | ( ( ( ( cstate == 3'b111 ) | ( cstate == 2'b110 ) ) & ( block_ready == 1'b1 ) ) & ( output_busy == 1'b0 ) ) ) ) 
-        begin
+        if ((sel_xor_wire == 1'b1) & ((((cstate == 1'b1) & (block_ready == 1'b1)) | ((((cstate == 2'b101) | (cstate == 1'b100)) & (output_busy == 1'b0)) & (block_ready == 1'b1))) | ((((cstate == 3'b111) | (cstate == 2'b110)) & (block_ready == 1'b1)) & (output_busy == 1'b0)))) 
             sel_xor_clr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:293 
-            begin
-                sel_xor_clr <= 1'b0;
-            end
-        end
+            sel_xor_clr <= 1'b0;
     end
     assign sel_xor = sel_xor_wire;
     always @ (  cstate or  block_ready or  ziroundnr or  output_busy or  cnt_output_size_r or  b)
     begin
-        if ( ( ( ( ( ( cstate == 1'b1 ) & ( block_ready == 1'b1 ) ) | ( ( cstate == 1'b10 ) & ( ziroundnr == 1'b1 ) ) ) | ( ( ( ( cstate == 1'b100 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) & ( cnt_output_size_r <= b ) ) ) | ( ( ( cstate == 2'b101 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) | ( ( ( ( cstate == 3'b111 ) | ( cstate == 2'b110 ) ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) 
-        begin
+        if ((((((cstate == 1'b1) & (block_ready == 1'b1)) | ((cstate == 1'b10) & (ziroundnr == 1'b1))) | ((((cstate == 1'b100) & (output_busy == 1'b0)) & (block_ready == 1'b1 )) & ( cnt_output_size_r <= b ))) | (((cstate == 2'b101 ) & ( output_busy == 1'b0 ) ) & (block_ready == 1'b1))) | ((((cstate == 3'b111) | (cstate == 2'b110)) & (output_busy == 1'b0)) & (block_ready == 1'b1))) 
             sel_final <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:300 
-            begin
-                sel_final <= 1'b0;
-            end
-        end
+            sel_final <= 1'b0;
     end
-    always @ (  cstate or  block_ready or  ziroundnr)
+    always @ ( cstate or block_ready or ziroundnr)
     begin
-        if ( ( ( ( ( cstate == 1'b1 ) & ( block_ready == 1'b1 ) ) | ( ( ( cstate == 1'b10 ) & ( ziroundnr == 1'b1 ) ) & ( block_ready == 1'b1 ) ) ) | ( ( cstate == 2'b11 ) & ( ziroundnr == 1'b1 ) ) ) | ( ( cstate == 1'b1000 ) & ( ziroundnr == 1'b1 ) ) ) 
-        begin
+        if ((((( cstate == 1'b1) & (block_ready == 1'b1)) | (((cstate == 1'b10) & (ziroundnr == 1'b1)) & (block_ready == 1'b1))) | ((cstate == 2'b11) & (ziroundnr == 1'b1 ))) | ((cstate == 1'b1000) & (ziroundnr == 1'b1))) 
             ld_rdctr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:306 
-            begin
-                ld_rdctr <= 1'b0;
-            end
-        end
+            ld_rdctr <= 1'b0;
     end
     always @ (  cstate or  ziroundnr)
     begin
-        if ( ( ( ( cstate == 1'b10 ) | ( cstate == 2'b11 ) ) | ( cstate == 1'b1000 ) ) & ( ziroundnr == 1'b0 ) ) 
-        begin
+        if (((( cstate == 1'b10) | (cstate == 2'b11)) | (cstate == 1'b1000)) & (ziroundnr == 1'b0)) 
             en_rdctr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:309 
-            begin
-                en_rdctr <= 1'b0;
-            end
-        end
+            en_rdctr <= 1'b0;
     end
-    always @ (  cstate or  block_ready or  ziroundnr or  msg_end or  output_busy or  cnt_output_size_r or  b)
+    always @ ( cstate or block_ready or ziroundnr or msg_end or output_busy or cnt_output_size_r or  b)
     begin
-        if ( ( ( ( ( ( ( ( ( cstate == 1'b1 ) & ( block_ready == 1'b1 ) ) | ( ( cstate == 1'b10 ) & ( ziroundnr == 1'b0 ) ) ) | ( ( ( cstate == 1'b10 ) & ( ziroundnr == 1'b1 ) ) & ( ( ( msg_end == 1'b0 ) & ( block_ready == 1'b1 ) ) | ( msg_end == 1'b1 ) ) ) ) | ( cstate == 2'b11 ) ) | ( ( ( ( cstate == 1'b100 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) & ( cnt_output_size_r <= b ) ) ) | ( ( ( cstate == 2'b101 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) | ( ( ( ( cstate == 3'b111 ) | ( cstate == 2'b110 ) ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) ) | ( cstate == 1'b1000 ) ) 
-        begin
+        if (((((((((cstate == 1'b1) & (block_ready == 1'b1)) | ((cstate == 1'b10) & (ziroundnr == 1'b0))) | (((cstate == 1'b10) & (ziroundnr == 1'b1)) & ((( msg_end == 1'b0 ) & ( block_ready == 1'b1 )) | ( msg_end == 1'b1 )))) | ( cstate == 2'b11 )) | (((( cstate == 1'b100 ) & ( output_busy == 1'b0 )) & ( block_ready == 1'b1 )) & ( cnt_output_size_r <= b ))) | ((( cstate == 2'b101 ) & ( output_busy == 1'b0 )) & ( block_ready == 1'b1 ))) | (((( cstate == 3'b111 ) | ( cstate == 2'b110 )) & ( output_busy == 1'b0 )) & ( block_ready == 1'b1 ))) | ( cstate == 1'b1000 )) 
             wr_state <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:311 
-            begin
-                wr_state <= 1'b0;
-            end
-        end
+            wr_state <= 1'b0;
     end
-    always @ (  cstate or  block_ready or  msg_end or  ziroundnr or  output_busy or  cnt_output_size_r or  b)
+    always @ ( cstate or block_ready or msg_end or ziroundnr or output_busy or cnt_output_size_r or b)
     begin
-        if ( ( ( ( ( ( ( cstate == 1'b1 ) & ( block_ready == 1'b1 ) ) & ( msg_end == 1'b1 ) ) | ( ( ( ( cstate == 1'b10 ) & ( block_ready == 1'b1 ) ) & ( msg_end == 1'b1 ) ) & ( ziroundnr == 1'b1 ) ) ) | ( ( ( ( cstate == 2'b101 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) & ( msg_end == 1'b1 ) ) ) | ( ( ( ( ( cstate == 1'b100 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) & ( msg_end == 1'b1 ) ) & ( cnt_output_size_r <= b ) ) ) | ( ( ( ( ( cstate == 3'b111 ) | ( cstate == 2'b110 ) ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 ) ) & ( msg_end == 1'b1 ) ) ) 
-        begin
+        if ((((((( cstate == 1'b1 ) & ( block_ready == 1'b1 )) & ( msg_end == 1'b1 )) | (((( cstate == 1'b10 ) & ( block_ready == 1'b1 )) & ( msg_end == 1'b1 )) & ( ziroundnr == 1'b1 ))) | (((( cstate == 2'b101 ) & ( output_busy == 1'b0 ) ) & ( block_ready == 1'b1 )) & ( msg_end == 1'b1 ))) | ((((( cstate == 1'b100 ) & ( output_busy == 1'b0 )) & ( block_ready == 1'b1 )) & ( msg_end == 1'b1 )) & ( cnt_output_size_r <= b ))) | (((((cstate == 3'b111) | (cstate == 2'b110)) & (output_busy == 1'b0)) & (block_ready == 1'b1)) & (msg_end == 1'b1 ))) 
             msg_end_clr <= 1'b1;
-        end
         else
-        begin 
-            if ( 1 ) // edautils Note : Review the 'if' condition. This is correct if it corresponds to the last 'else' section of the conditional concurrent signal assignment at src/sha3_pkg.vhd:322 
-            begin
-                msg_end_clr <= 1'b0;
-            end
-        end
+            msg_end_clr <= 1'b0;
     end
 endmodule 
