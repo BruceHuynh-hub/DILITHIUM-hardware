@@ -18,15 +18,11 @@ module regn(
         if ( clk == 1'b1 ) 
         begin
             if ( rst == 1'b1 ) 
-            begin
                 output <= init;
-            end
             else
             begin 
                 if ( en == 1'b1 ) 
-                begin
                     output <= input;
-                end
             end
         end
     end
