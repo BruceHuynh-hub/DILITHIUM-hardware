@@ -52,17 +52,17 @@ module sha3_fsm3(
     reg ek;
     reg lk;
     reg eo;
-    assign outsize_div_w = divceil_32_32(CONV_INTEGER_1(unsigned'(output_size)),w);
+    assign outsize_div_w = divceil_32_32(CONV_INTEGER_1((output_size)),w);
     assign hseg = CONV_STD_LOGIC_VECTOR_32_32(outsize_div_w,11);
     countern #(
             .n(11)
         ) kcount_gen (
             .clk(clk),
             .en(ek),
-            .input({ 1'b0 }),
+            .data_in({ 1'b0 }),
             .load(lk),
             .rst(1'b0),
-            .output(kc)
+      .data_out(kc) //renamed input and output to data_in/data_out
         );
     always @ (  kc or  hseg)
     begin
