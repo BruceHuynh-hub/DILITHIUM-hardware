@@ -89,10 +89,10 @@ module keccak_fsm2(
         ) proc_counter_gen (
             .clk(clk),
             .en(ei),
-            .input({ 1'b0 }),
+            .data_in({ 1'b0 }),
             .load(li),
             .rst(rst),
-            .output(pc)
+            .data_out(pc)
         );
     always @ (  pc)
     begin
@@ -395,7 +395,7 @@ module keccak_fsm2(
             .clr(sel_xor_clr),
             .rst(rst),
             .set(sel_xor_set),
-            .output(sel_xor_wire)
+            .data_out(sel_xor_wire)
         );
     always @ (cstate or ziroundnr)
     begin
