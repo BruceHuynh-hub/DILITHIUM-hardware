@@ -2,8 +2,8 @@ module regn(
         clk,
         rst,
         en,
-        input,
-        output
+        data_in,
+        data_out
     );
     parameter [31:0]n  = 1600;
     parameter init  = { 1'b0 };
