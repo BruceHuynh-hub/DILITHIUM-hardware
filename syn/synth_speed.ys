@@ -5,10 +5,18 @@ read_verilog ../rtl/coeff_decomposer.v
 read_verilog ../rtl/decomp_map1.v 
 
 synth -top decomposer_unit
-flatten
+
+opt -purge
+
+
 dfflibmap -liberty /mnt/volume_nyc1_01/skywater-pdk/libraries/sky130_fd_sc_hd/latest/timing/sky130_fd_sc_hd__tt_025C_1v80.lib
-abc -liberty /mnt/volume_nyc1_01/skywater-pdk/libraries/sky130_fd_sc_hd/latest/timing/sky130_fd_sc_hd__tt_025C_1v80.lib
-opt_clean
+
+
+abc -D 10000 -script abc_speed.script -liberty /mnt/volume_nyc1_01/skywater-pdk/libraries/sky130_fd_sc_hd/latest/timing/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+setundef -zero 
+
+opt_clean -purge
 
 stat -liberty /mnt/volume_nyc1_01/skywater-pdk/libraries/sky130_fd_sc_hd/latest/timing/sky130_fd_sc_hd__tt_025C_1v80.lib 
 write_verilog decomposer_gl.v
