@@ -15,7 +15,8 @@ module coeff_decomposer_tb;
     wire [23:0] dob = 0;
     wire valid_o = 0;
     wire ready_i;
-        
+    
+    parameter COEFF_W  = 24; 
     reg [COEFF_W - 1: 0] di_0; 
     reg [COEFF_W - 1: 0] di_1; 
     reg [COEFF_W - 1: 0] di_2; 
