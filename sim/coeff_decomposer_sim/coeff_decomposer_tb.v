@@ -15,15 +15,20 @@ module coeff_decomposer_tb;
     wire [23:0] dob = 0;
     wire valid_o = 0;
     wire ready_i;
+
+    parameter SEC_LVL_0  = 3'b000; 
+    parameter SEC_LVL_2  = 3'b010; 
     
+    parameter OUTPUT_W = 4;
     parameter COEFF_W  = 24; 
+
     reg [COEFF_W - 1: 0] di_0; 
     reg [COEFF_W - 1: 0] di_1; 
     reg [COEFF_W - 1: 0] di_2; 
     reg [COEFF_W - 1: 0] di_3;
-    
+
     assign di = {di_3, di_2, di_1, di_0};
-     
+    
     localparam
         N1        = 18'd190464,
         N2        = 19'd523776,
