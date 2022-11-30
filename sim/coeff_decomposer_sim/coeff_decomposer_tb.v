@@ -10,7 +10,7 @@ module coeff_decomposer_tb;
     reg  ready_o;
     
     reg [2:0]  sec_lvl;
-    reg [23:0] di;
+    wire [23:0] di;
     wire [23:0] doa = 0;
     wire [23:0] dob = 0;
     wire valid_o = 0;
