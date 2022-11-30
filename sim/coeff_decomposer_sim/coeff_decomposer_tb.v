@@ -16,6 +16,11 @@ module coeff_decomposer_tb;
     wire valid_o = 0;
     wire ready_i;
         
+    reg [COEFF_W - 1: 0] di_0; 
+    reg [COEFF_W - 1: 0] di_1; 
+    reg [COEFF_W - 1: 0] di_2; 
+    reg [COEFF_W - 1: 0] di_3;
+    
     assign di = {di_3, di_2, di_1, di_0};
      
     localparam
@@ -38,7 +43,7 @@ module coeff_decomposer_tb;
         .doa(doa), 
         .dob(dob), 
         .valid_o(valid_o), 
-        .ready_i(ready_i))
+        .ready_i(ready_i)
     );
 
     initial begin
