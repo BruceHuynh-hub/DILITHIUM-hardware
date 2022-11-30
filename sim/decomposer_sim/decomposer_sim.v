@@ -71,4 +71,3 @@ module decomposer_sim();
         .ready_o(ready_o));
     
 endmodule
-endmodule
