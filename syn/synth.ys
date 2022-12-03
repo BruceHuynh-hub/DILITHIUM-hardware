@@ -1,8 +1,8 @@
 read_liberty -lib /mnt/volume_nyc1_01/skywater-pdk/libraries/sky130_fd_sc_hd/latest/timing/sky130_fd_sc_hd__tt_025C_1v80.lib
 
-read_verilog ../rtl/decomposer_unit.v 
-read_verilog ../rtl/coeff_decomposer.v 
-read_verilog ../rtl/decomp_map1.v 
+read_verilog ../decomp/decomp/decomposer_unit.v 
+read_verilog ../decomp/decomp/coeff_decomposer.v 
+read_verilog ../decomp/decomp/decomp_map1.v 
 
 synth -top decomposer_unit
 flatten
