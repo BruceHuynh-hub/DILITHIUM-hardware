@@ -10,5 +10,5 @@ export ABC_CLOCK_PERIOD_IN_PS = 10000
 export SDC_FILE      = /OpenROAD-flow-scripts/flow/mydesign/decomp/config/constraint.sdc
 
 # These values must be multiples of placement site
-export DIE_AREA    =  0  0 350 350
-export CORE_AREA   =  0  0 350 350
+export DIE_AREA    =  0  0 320 320
+export CORE_AREA   =  0  0 320 320

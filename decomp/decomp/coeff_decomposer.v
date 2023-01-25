@@ -76,7 +76,7 @@ module coeff_decomposer(
             a1_1 <= a1_0;
             a1_2 <= a1_1;
             dob  <= a1_2;
-
+ 
             a0_0 <= di_buffer;
             a0_2 <= a0_1 - sub_val;
             doa  <= (a0_2 < 0) ? a0_2 + Q : a0_2;
