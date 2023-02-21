@@ -46,7 +46,9 @@ module decomposer_sim();
                                 
     end 
     
-    initial begin 
+    initial begin
+        $dumpfile("decomposer_sim.vcd");
+        $dumpvars(0, decomposer_sim); 
         $monitor("simtime = %g, doa = %h", $time, doa); 
         $monitor("simtime = %g, dob = %h", $time, dob); 
         

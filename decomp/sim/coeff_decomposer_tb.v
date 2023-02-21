@@ -22,17 +22,9 @@ module coeff_decomposer_tb;
     parameter OUTPUT_W = 4;
     parameter COEFF_W  = 24; 
 
+    integer transaction_num1 = 0;
+    integer transaction_num2 = 2;
     
-    localparam
-        N1        = 18'd190464,
-        N2        = 19'd523776,
-        Q_N1_DIFF = 23'd8189953,
-        Q_N2_DIFF = 23'd7856641,
-        K         = 6'd41,
-        M1        = 24'd11545611,
-        M2        = 23'd4198404,
-        Q         = 23'd8380417;
-
     coeff_decomposer CDTB(
         .rst(rst), 
         .clk(clk), 
@@ -54,11 +46,19 @@ module coeff_decomposer_tb;
         clk     = 1'b0; 
         sec_lvl = SEC_LVL_0;
         
-        #50
+        #55
         rst     = 1'b0;
 
         valid_i = 1'b0; //testing with off
-        ready_o = 1'b0;  
+        ready_o = 1'b0;
+        #100  
+        di = 24'd2312250; // 4
+        #20
+        di = 24'd2500010; // 5
+        #20
+        di = 24'd5000020; // 10
+        #20
+        di = 24'd8022100; // 15
 
         #100 //all set to 0s
         valid_i = 1'b1;  //both on
@@ -72,7 +72,6 @@ module coeff_decomposer_tb;
         #20
         di = 24'd8022100; // 15
         #20
-
         sec_lvl = SEC_LVL_2; // Changing security levels
 
         di = 24'd2312250; // 12
@@ -83,11 +82,41 @@ module coeff_decomposer_tb;
         #20
         di = 24'd8022100; // 42
         #20
-        di = 24'b0; 
-
+        di = 24'b0;
+        #20
+        di = 24'd8194721; // 43 
+        #20
+        
+        di = 24'd9000000; // 0
+        #20
+        di = 24'd10000; // 1
+        #20
+        di = 24'd16777215; // largest input value
+        sec_lvl = SEC_LVL_0;
+        repeat(10) #20 di = $urandom_range(0, 8118529);
+        sec_lvl = SEC_LVL_2;
+        repeat(10) #20 di = $urandom_range(0, 8285185);
+        #1000
+        $finish;
     end
 
     always  #5 clk = !clk;
+
+    always @(di) begin 
+        $display("transaction input [id: %d]", transaction_num1);
+        $display("di = %d", di);
+        transaction_num1 = transaction_num1 + 1;
+    end
+    
+    always @(doa or dob) begin
+        if (transaction_num1 >= 4) begin
+            $display("transaction output [id: %d]", transaction_num2);
+            $display("doa = %d, dob = %d", doa, dob);
+            transaction_num2 = transaction_num2 + 1;
+        end
+    end
+    
+    
 
 /*
     initial begin
